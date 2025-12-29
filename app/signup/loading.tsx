@@ -1,0 +1,10 @@
+export default function SignupLoading() {
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50/50 via-white to-white">
+            <div className="flex flex-col items-center gap-4">
+                <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+                <p className="text-gray-500 text-sm">Loading...</p>
+            </div>
+        </div>
+    );
+}

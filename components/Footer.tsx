@@ -3,10 +3,12 @@
 import { Facebook, Twitter, Instagram } from "lucide-react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import { useAuth } from "@/app/context/AuthContext";
 
 export default function Footer() {
   const router = useRouter();
   const pathname = usePathname();
+  const { user } = useAuth();
 
   const handleSectionClick = (sectionId: string) => {
     if (pathname === "/") {
@@ -97,9 +99,18 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-violet-600 transition-colors">
+                <button
+                  onClick={() => {
+                    if (user) {
+                      router.push("/contact");
+                    } else {
+                      router.push("/login?redirect=/contact");
+                    }
+                  }}
+                  className="hover:text-violet-600 transition-colors text-left"
+                >
                   Contact
-                </Link>
+                </button>
               </li>
             </ul>
           </div>

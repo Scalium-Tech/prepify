@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion } from "@/components/motion";
 import { Header } from "./_components/Header";
 import { InterviewSetupForm } from "./_components/InterviewSetupForm";
 import { ResumeUploadCard } from "./_components/ResumeUploadCard";

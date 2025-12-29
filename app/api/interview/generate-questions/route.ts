@@ -37,22 +37,43 @@ export async function POST(req: NextRequest) {
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
         console.log("Using Gemini Model: gemini-2.0-flash-exp");
 
+        // Category-specific guidance
+        const categoryGuidance: Record<string, string> = {
+            "hr": "Focus on HR topics: company culture fit, salary expectations, career goals, work-life balance, team dynamics, and general suitability for the role.",
+            "behavioral": "Use the STAR method (Situation, Task, Action, Result). Ask about past experiences, conflict resolution, teamwork, leadership moments, and problem-solving situations.",
+            "technical": "Focus on technical skills, programming concepts, system design, algorithms, data structures, debugging scenarios, and technical problem-solving relevant to the candidate's tech stack.",
+            "skill-based": "Assess specific job-related skills mentioned in the resume. Ask practical questions about tools, methodologies, and hands-on experience with technologies or frameworks.",
+            "educational": "Focus on academic background, coursework, research projects, academic achievements, favorite subjects, learning approach, and how education prepared them for this role.",
+            "communication": "Assess verbal and written communication skills, presentation abilities, explaining complex topics simply, active listening, and interpersonal skills.",
+            "project": "Deep dive into projects mentioned in resume. Ask about project scope, role, challenges faced, technologies used, outcomes achieved, and lessons learned.",
+            "managerial": "Focus on leadership style, team management, decision-making, delegation, mentoring, performance management, strategic thinking, and handling difficult team situations.",
+            "stress": "Ask rapid-fire questions requiring quick thinking. Include hypothetical scenarios, time-pressure situations, and questions that test composure under stress.",
+            "other": "Focus on extracurricular activities, hobbies, personal achievements, volunteer work, interests outside work, what drives and motivates them, and unique aspects of their personality."
+        };
+
+        const specificGuidance = categoryGuidance[category] || categoryGuidance["hr"];
+
         const prompt = `
-      You are an expert technical interviewer. Generate ${questionCount} interview questions for a candidate.
+      You are an expert interviewer. Generate exactly ${questionCount} interview questions for a candidate.
       
       Details:
       - Interview Category: ${category}
       - Difficulty Level: ${difficulty}
-      - Resume Context: ${resumeText.substring(0, 3000)}... (truncated)
-      - Job Description: ${jobDescription ? jobDescription.substring(0, 1000) : "N/A"}
+      - Resume Context: ${resumeText ? resumeText.substring(0, 3000) : "Not provided"}
+      - Job Description: ${jobDescription ? jobDescription.substring(0, 1000) : "Not provided"}
 
-      Rules:
-      1. The first question MUST be "Please introduce yourself."
-      2. The remaining questions should be relevant to the resume and category.
-      3. Return ONLY a raw JSON array of strings. Do not include markdown formatting like \`\`\`json.
+      Category-Specific Focus:
+      ${specificGuidance}
+
+      STRICT RULES:
+      1. The FIRST question MUST ALWAYS be exactly: "Please introduce yourself."
+      2. Questions 2 onwards should be directly relevant to the "${category}" category using the guidance above.
+      3. Tailor questions to the candidate's resume when available.
+      4. Match the ${difficulty} difficulty level (easy = straightforward, medium = requires thought, hard = challenging/in-depth).
+      5. Return ONLY a raw JSON array of strings. No markdown, no explanation.
       
-      Example output:
-      ["Please introduce yourself.", "Tell me about your experience with React.", "How do you handle conflict?"]
+      Example output format:
+      ["Please introduce yourself.", "Question 2 here...", "Question 3 here..."]
     `;
 
         const result = await model.generateContent(prompt);

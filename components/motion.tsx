@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m as motion } from "framer-motion";
 import { ComponentProps, forwardRef } from "react";
 
 // Pre-configured motion components with common animations

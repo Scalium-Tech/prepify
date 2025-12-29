@@ -3,8 +3,13 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { InterviewProvider } from './context/InterviewContext';
 import { AuthProvider } from './context/AuthContext';
+import { MotionProvider } from '@/components/MotionProvider';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap', // Prevent FOIT (Flash of Invisible Text)
+  preload: true,
+});
 
 export const metadata: Metadata = {
   title: 'Preply - AI Interview Practice',
@@ -31,16 +36,35 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Get Supabase URL for preconnect
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const supabaseDomain = supabaseUrl ? new URL(supabaseUrl).origin : '';
+
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Preconnect to critical third-party origins */}
+        {supabaseDomain && (
+          <>
+            <link rel="preconnect" href={supabaseDomain} />
+            <link rel="dns-prefetch" href={supabaseDomain} />
+          </>
+        )}
+        {/* Preconnect to Google Fonts */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body className={inter.className} suppressHydrationWarning>
         <AuthProvider>
           <InterviewProvider>
-            {children}
+            <MotionProvider>
+              {children}
+            </MotionProvider>
           </InterviewProvider>
         </AuthProvider>
       </body>
     </html>
   );
 }
+
 

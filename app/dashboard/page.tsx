@@ -9,23 +9,29 @@ import {
   CheckCircle2, AlertTriangle, ArrowUpRight, ArrowDownRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  Cell,
-} from "recharts";
-import { motion } from "framer-motion";
+import { m as motion } from "framer-motion";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 
 import { ScriptModal } from "@/components/dashboard/ScriptModal";
 import { ReportModal } from "@/components/dashboard/ReportModal";
+
+// Lazy load charts to reduce initial bundle size
+const PerformanceGrowthChart = dynamic(
+  () => import("@/components/dashboard/PerformanceGrowthChart"),
+  {
+    loading: () => <div className="h-[280px] w-full bg-slate-100/50 animate-pulse rounded-xl" />,
+    ssr: false
+  }
+);
+
+const CategoryPerformanceChart = dynamic(
+  () => import("@/components/dashboard/CategoryPerformanceChart"),
+  {
+    loading: () => <div className="h-[280px] w-full bg-slate-100/50 animate-pulse rounded-xl" />,
+    ssr: false
+  }
+);
 
 interface Interview {
   id: string;
@@ -234,7 +240,7 @@ export default function DashboardPage() {
 
   const tableInterviews = [...interviews].reverse();
 
-  const categoryColors = ["#8b5cf6", "#06b6d4", "#f59e0b", "#10b981", "#ec4899", "#6366f1"];
+  // const categoryColors = ["#8b5cf6", "#06b6d4", "#f59e0b", "#10b981", "#ec4899", "#6366f1"]; // Moved to component
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -326,23 +332,7 @@ export default function DashboardPage() {
                 </div>
                 <h2 className="text-lg font-bold text-gray-900">Performance Growth</h2>
               </div>
-              <div className="h-[280px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={graphData}>
-                    <defs>
-                      <linearGradient id="colorMarks" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#7c3aed" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#7c3aed" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                    <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} dy={10} />
-                    <YAxis domain={[0, 100]} axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
-                    <Tooltip contentStyle={{ backgroundColor: 'white', borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                    <Area type="monotone" dataKey="marks" stroke="#7c3aed" strokeWidth={3} fillOpacity={1} fill="url(#colorMarks)" />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
+              <PerformanceGrowthChart data={graphData} />
             </motion.div>
           )}
 
@@ -359,20 +349,7 @@ export default function DashboardPage() {
                 </div>
                 <h2 className="text-lg font-bold text-gray-900">By Category</h2>
               </div>
-              <div className="h-[280px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={analytics.categoryData} layout="vertical">
-                    <XAxis type="number" domain={[0, 100]} axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
-                    <YAxis type="category" dataKey="category" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} width={80} />
-                    <Tooltip contentStyle={{ backgroundColor: 'white', borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                    <Bar dataKey="avgScore" radius={[0, 8, 8, 0]}>
-                      {analytics.categoryData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={categoryColors[index % categoryColors.length]} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
+              <CategoryPerformanceChart data={analytics.categoryData} />
             </motion.div>
           )}
         </div>

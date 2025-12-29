@@ -1,7 +1,7 @@
 "use client";
 
 import { X, Trophy, CheckCircle2, AlertTriangle, FileText, Download, Loader2, MessageSquare } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m as motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useRef, useState, useEffect } from "react";
 

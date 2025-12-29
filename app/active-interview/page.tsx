@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { m as motion } from "framer-motion";
 import { Mic, Volume2, Keyboard, Loader2, StopCircle, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m as motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useInterview } from "@/app/context/InterviewContext";
 import {
@@ -31,16 +31,16 @@ import {
 import { cn } from "@/lib/utils";
 
 const CATEGORIES = [
-    { id: "hr", label: "HR", icon: Briefcase },
-    { id: "behavioral", label: "Behavioral", icon: Users },
-    { id: "communication", label: "Communication", icon: MessagesSquare },
-    { id: "project", label: "Project-Based", icon: Code2 },
-    { id: "internship", label: "Internship", icon: GraduationCap },
-    { id: "fresher", label: "Fresher", icon: Leaf },
-    { id: "experienced", label: "Experienced Professional", icon: Award },
-    { id: "managerial", label: "Managerial", icon: UserCog },
-    { id: "stress", label: "Stress/Rapid-Fire", icon: Zap },
-    { id: "mock", label: "Mock Final Round", icon: Trophy },
+    { id: "hr", label: "HR", icon: Briefcase, description: "General HR questions" },
+    { id: "behavioral", label: "Behavioral", icon: Users, description: "STAR method questions" },
+    { id: "technical", label: "Technical", icon: Code2, description: "Technical & coding questions" },
+    { id: "skill-based", label: "Skill-Based", icon: Zap, description: "Role-specific skill assessment" },
+    { id: "educational", label: "Educational", icon: GraduationCap, description: "Academic background focus" },
+    { id: "communication", label: "Communication", icon: MessagesSquare, description: "Communication skills" },
+    { id: "project", label: "Project-Based", icon: FileText, description: "Project experience focus" },
+    { id: "managerial", label: "Managerial", icon: UserCog, description: "Leadership & management" },
+    { id: "stress", label: "Stress/Rapid-Fire", icon: Trophy, description: "Quick thinking under pressure" },
+    { id: "other", label: "Other", icon: Award, description: "Hobbies, achievements & extracurriculars" },
 ];
 
 const DIFFICULTIES = [

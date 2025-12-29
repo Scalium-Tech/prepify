@@ -2,7 +2,7 @@
 
 import { FileText, Upload, FileCheck2, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion, AnimatePresence } from "framer-motion";
+import { m as motion, AnimatePresence } from "framer-motion";
 import { useInterview } from "@/app/context/InterviewContext";
 import { useState, useRef } from "react";
 import { toast } from "sonner"; // Assuming sonner is installed or use alert
@@ -73,10 +73,10 @@ export function ResumeUploadCard() {
                 <button
                     onClick={() => setActiveTab('resume')}
                     className={`flex-1 shadow-sm border px-4 py-2 rounded-full text-sm font-bold flex items-center justify-center gap-2 transition-colors ${activeTab === 'resume'
-                            ? hasResume
-                                ? 'bg-green-50 border-green-200 text-green-700'
-                                : 'bg-blue-50 border-blue-200 text-blue-700'
-                            : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200'
+                        ? hasResume
+                            ? 'bg-green-50 border-green-200 text-green-700'
+                            : 'bg-blue-50 border-blue-200 text-blue-700'
+                        : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200'
                         }`}
                 >
                     <span className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] text-white ${hasResume ? 'bg-green-600' : activeTab === 'resume' ? 'bg-blue-600' : 'bg-gray-300'
@@ -90,10 +90,10 @@ export function ResumeUploadCard() {
                 <button
                     onClick={() => setActiveTab('jd')}
                     className={`flex-1 shadow-sm border px-4 py-2 rounded-full text-sm font-bold flex items-center justify-center gap-2 transition-colors ${activeTab === 'jd'
-                            ? hasJD
-                                ? 'bg-green-50 border-green-200 text-green-700'
-                                : 'bg-blue-50 border-blue-200 text-blue-700'
-                            : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200'
+                        ? hasJD
+                            ? 'bg-green-50 border-green-200 text-green-700'
+                            : 'bg-blue-50 border-blue-200 text-blue-700'
+                        : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200'
                         }`}
                 >
                     <span className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] text-white ${hasJD ? 'bg-green-600' : activeTab === 'jd' ? 'bg-blue-600' : 'bg-gray-300'

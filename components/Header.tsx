@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/app/context/AuthContext";
-import { LayoutDashboard, LogOut, ChevronDown } from "lucide-react";
+import { LayoutDashboard, LogOut, ChevronDown, MessageSquareHeart } from "lucide-react";
 
 export default function Header() {
   const pathname = usePathname();
@@ -97,6 +97,22 @@ export default function Header() {
             >
               FAQ
             </button>
+            <Link
+              href="/feedback"
+              onClick={(e) => {
+                if (!user) {
+                  e.preventDefault();
+                  router.push("/login?redirect=/feedback");
+                }
+              }}
+              className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${isActive("/feedback")
+                  ? "text-violet-600 font-semibold"
+                  : "text-gray-700 hover:text-violet-600"
+                }`}
+            >
+              <MessageSquareHeart className="w-4 h-4" />
+              Feedback
+            </Link>
           </nav>
 
           <div className="flex items-center space-x-3">

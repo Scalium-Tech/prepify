@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 import { Heart, Target, Zap, Users, Quote, Sparkles, CheckCircle2, ArrowRight, Lightbulb, Code, BookOpen } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/context/AuthContext";
 
 // Lazy load framer-motion components
 const MotionDiv = dynamic(
@@ -24,6 +26,20 @@ const MotionScale = dynamic(
 );
 
 export default function AboutContent() {
+    const router = useRouter();
+    const { user } = useAuth();
+
+    // Handle conditional navigation for CTA buttons
+    const handleGetStarted = () => {
+        if (user) {
+            // Authenticated users go directly to interview setup
+            router.push("/interview-setup");
+        } else {
+            // Unauthenticated users go to login with redirect
+            router.push("/login?redirect=/interview-setup");
+        }
+    };
+
     return (
         <>
             {/* Hero Section */}
@@ -49,17 +65,17 @@ export default function AboutContent() {
                                 </span>
                             </h1>
                             <p className="text-xl text-gray-600 leading-relaxed mb-8">
-                                Interview Taker was born from countless sleepless nights preparing for interviews,
+                                Preply was born from countless sleepless nights preparing for interviews,
                                 the anxiety of not knowing what to expect, and a dream to make interview preparation
                                 accessible to everyone.
                             </p>
                             <div className="flex flex-wrap gap-4">
-                                <Link
-                                    href="/signup"
+                                <button
+                                    onClick={handleGetStarted}
                                     className="inline-flex items-center gap-2 px-6 py-3 bg-violet-600 text-white font-semibold rounded-xl hover:bg-violet-700 transition-all shadow-lg shadow-violet-200"
                                 >
                                     Start Your Journey <ArrowRight className="w-4 h-4" />
-                                </Link>
+                                </button>
                             </div>
                         </MotionLeft>
 
@@ -74,7 +90,7 @@ export default function AboutContent() {
                                     <div className="relative w-72 h-72 md:w-80 md:h-80 rounded-2xl overflow-hidden group">
                                         <Image
                                             src="/founder.jpg"
-                                            alt="Nakul Dafale - Founder of Interview Taker"
+                                            alt="Nakul Dafale - Founder of Preply"
                                             fill
                                             className="object-cover transition-transform duration-500 group-hover:scale-105"
                                             priority
@@ -163,7 +179,7 @@ export default function AboutContent() {
                                         That&apos;s when the idea struck me – what if AI could be your personal interview coach?
                                         Available 24/7, never judging, always patient, and brutally honest with feedback.
                                         I combined my passion for building web applications with AI technology to create
-                                        <strong> Interview Taker</strong> – a platform where anyone can practice interviews
+                                        <strong> Preply</strong> – a platform where anyone can practice interviews
                                         anytime, anywhere, and get real feedback to improve.
                                     </p>
                                 </div>
@@ -207,7 +223,7 @@ export default function AboutContent() {
                             {
                                 icon: <Users className="w-6 h-6" />,
                                 title: "For Everyone",
-                                description: "Whether you're a student, career switcher, or seasoned professional – Interview Taker adapts to you.",
+                                description: "Whether you're a student, career switcher, or seasoned professional – Preply adapts to you.",
                                 color: "pink"
                             }
                         ].map((item, index) => (
@@ -227,7 +243,7 @@ export default function AboutContent() {
                 </div>
             </section>
 
-            {/* Why Interview Taker Section */}
+            {/* Why Preply Section */}
             <section className="py-20 px-6">
                 <div className="max-w-6xl mx-auto">
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -237,7 +253,7 @@ export default function AboutContent() {
                                 Why Choose Us
                             </span>
                             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                                What Makes Interview Taker Different
+                                What Makes Preply Different
                             </h2>
                             <p className="text-gray-600 leading-relaxed mb-8">
                                 This isn&apos;t just another interview prep tool. It&apos;s built by someone who
@@ -272,7 +288,7 @@ export default function AboutContent() {
                             <div className="bg-gradient-to-br from-violet-600 to-purple-600 rounded-3xl p-8 text-white">
                                 <Quote className="w-12 h-12 text-white/30 mb-6" />
                                 <p className="text-xl leading-relaxed mb-6">
-                                    &ldquo;I built Interview Taker because I wish I had something like this when I was
+                                    &ldquo;I built Preply because I wish I had something like this when I was
                                     preparing for my placements. Every student deserves a fair chance to practice
                                     and improve, without barriers.&rdquo;
                                 </p>
@@ -309,12 +325,12 @@ export default function AboutContent() {
                             not harder. Start your first practice interview today – it&apos;s free!
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
-                            <Link
-                                href="/signup"
+                            <button
+                                onClick={handleGetStarted}
                                 className="inline-flex items-center gap-2 px-8 py-4 bg-white text-violet-600 font-bold rounded-xl hover:bg-violet-50 transition-all shadow-lg hover:-translate-y-1"
                             >
                                 Get Started Free <ArrowRight className="w-5 h-5" />
-                            </Link>
+                            </button>
                             <Link
                                 href="/contact"
                                 className="inline-flex items-center gap-2 px-8 py-4 bg-white/10 text-white font-bold rounded-xl hover:bg-white/20 transition-all border border-white/30"

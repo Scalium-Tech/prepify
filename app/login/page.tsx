@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/interview-setup";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,7 +33,7 @@ export default function LoginPage() {
       }
 
       if (data.session) {
-        router.push("/interview-setup");
+        router.push(redirectTo);
       } else {
         setError("Login failed. Please try again.");
         setLoading(false);

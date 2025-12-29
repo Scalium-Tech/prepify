@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useInterview } from "@/app/context/InterviewContext";
 import { Loader2, CheckCircle2, AlertTriangle, RefreshCw, BarChart3, BookOpen, Download, MessageSquare, ThumbsUp, AlertCircle, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { m as motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export default function InterviewResultsPage() {
