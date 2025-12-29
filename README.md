@@ -1,89 +1,122 @@
 <div align="center">
+  <img src="https://img.shields.io/badge/Next.js-13.5-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-3.3-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Supabase-Auth_&_DB-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
+  <img src="https://img.shields.io/badge/Google_Gemini-AI-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini AI" />
+</div>
 
-# 🎯 Preply - AI Interview Practice Platform
+<br />
 
-### Master Your Interviews with AI-Powered Mock Sessions
+<div align="center">
+  <h1>🎯 Preply - AI Interview Practice</h1>
+  <p><strong>Ace your next interview with AI-powered mock interviews and real-time feedback</strong></p>
+  
+  <a href="#demo">View Demo</a> •
+  <a href="#features">Features</a> •
+  <a href="#getting-started">Getting Started</a> •
+  <a href="#tech-stack">Tech Stack</a>
+</div>
 
-[![Next.js](https://img.shields.io/badge/Next.js-13.5-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.0-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
-[![Supabase](https://img.shields.io/badge/Supabase-Auth-green?style=for-the-badge&logo=supabase)](https://supabase.com/)
-
-[Live Demo](#) · [Report Bug](https://github.com/Scalium-Tech/preply_nakul/issues) · [Request Feature](https://github.com/Scalium-Tech/preply_nakul/issues)
+<br />
 
 ---
-
-<img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Preply Banner" width="800" style="border-radius: 12px;" />
-
-</div>
 
 ## ✨ Overview
 
-**Preply** is a modern, AI-powered interview preparation platform designed to help students and professionals ace their interviews. Practice with realistic mock interviews, receive instant AI feedback, and track your progress over time.
+**Preply** is a modern AI-powered interview practice platform that helps job seekers prepare for their interviews with personalized mock sessions, instant feedback, and performance analytics.
 
-> 🎓 *Built by a student, for students* — because everyone deserves access to quality interview preparation.
+Upload your resume, select your interview category, and practice with our AI interviewer that adapts questions based on your profile. Get detailed feedback on your responses and track your improvement over time.
 
 ---
 
-## 🚀 Key Features
+## 🎬 Demo
 
-<table>
-<tr>
-<td width="50%">
+<div align="center">
+  <img src="public/demo-screenshot.png" alt="Preply Demo" width="800" />
+</div>
 
-### 🤖 AI-Powered Interviews
-- Dynamic question generation based on your resume
-- Follow-up questions that adapt to your responses
-- Multiple interview categories (Technical, Behavioral, HR)
+> **Live Demo**: [Coming Soon]
 
-</td>
-<td width="50%">
+---
 
-### 📊 Smart Analytics Dashboard
-- Track performance across all interviews
-- View category-wise analysis
-- Identify strengths and improvement areas
+## 🚀 Features
 
-</td>
-</tr>
-<tr>
-<td width="50%">
+### 🎤 AI-Powered Interviews
+- **Voice & Text Input** - Answer questions using your microphone or keyboard
+- **Personalized Questions** - AI generates questions based on your resume and target role
+- **Multiple Categories** - HR, Technical, Behavioral, Stress, and more
+- **Adjustable Difficulty** - Easy, Medium, Hard levels
 
-### 📝 Detailed Feedback Reports
-- Question-by-question feedback
-- Personalized improvement suggestions
-- Download reports as PDF
+### 📊 Performance Analytics
+- **Real-time Scoring** - Get instant feedback on your responses
+- **Detailed Reports** - Strengths, weaknesses, and improvement suggestions
+- **Progress Tracking** - Visual charts showing your growth over time
+- **Downloadable PDFs** - Export your interview reports
 
-</td>
-<td width="50%">
+### 🏠 User Dashboard
+- **Interview History** - View all past interviews with scores
+- **Performance Charts** - Line graphs and category breakdowns
+- **Practice Streak** - Gamified motivation system
+- **Quick Stats** - Total interviews, average score, improvement metrics
 
-### 🔥 Gamification Elements
-- Practice streaks to stay motivated
-- Score tracking and improvement metrics
-- Achievement milestones
-
-</td>
-</tr>
-</table>
+### 🔐 Secure Authentication
+- **Supabase Auth** - Email/password and social login
+- **Protected Routes** - Secure access to user data
+- **Session Management** - Persistent login sessions
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Category | Technologies |
-|----------|-------------|
-| **Frontend** | Next.js 13, React 18, TypeScript |
-| **Styling** | Tailwind CSS, Framer Motion |
-| **Backend** | Next.js API Routes, Supabase |
+| Category | Technology |
+|----------|------------|
+| **Framework** | Next.js 13.5 (App Router) |
+| **Language** | TypeScript |
+| **Styling** | Tailwind CSS |
+| **UI Components** | Radix UI, shadcn/ui |
+| **Animations** | Framer Motion |
 | **Authentication** | Supabase Auth |
 | **Database** | Supabase PostgreSQL |
-| **AI Integration** | Google Gemini 2.5 Flash |
+| **AI Model** | Google Gemini 2.0 Flash |
 | **Charts** | Recharts |
-| **UI Components** | Radix UI, Lucide Icons |
+| **Icons** | Lucide React |
 
 ---
 
-## 📦 Installation
+## 📁 Project Structure
+
+```
+preply/
+├── app/
+│   ├── api/interview/        # API routes for AI interview
+│   │   ├── generate-questions/
+│   │   ├── generate-report/
+│   │   ├── parse-resume/
+│   │   └── save-result/
+│   ├── context/              # React Context providers
+│   │   ├── AuthContext.tsx
+│   │   └── InterviewContext.tsx
+│   ├── dashboard/            # User dashboard
+│   ├── interview-setup/      # Interview configuration
+│   ├── active-interview/     # Live interview session
+│   ├── result-page/          # Interview results
+│   ├── login/                # Authentication
+│   ├── signup/
+│   └── page.tsx              # Landing page
+├── components/
+│   ├── ui/                   # Reusable UI components
+│   ├── dashboard/            # Dashboard-specific components
+│   └── Header.tsx, Footer.tsx
+├── lib/
+│   ├── supabase.ts           # Supabase client
+│   └── utils.ts              # Utility functions
+└── public/                   # Static assets
+```
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
@@ -92,121 +125,151 @@
 - Supabase account
 - Google AI API key
 
-### Quick Start
+### Installation
 
-```bash
-# Clone the repository
-git clone https://github.com/Scalium-Tech/preply_nakul.git
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Scalium-Tech/preply_nakul.git
+   cd preply_nakul
+   ```
 
-# Navigate to project directory
-cd preply_nakul
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-# Install dependencies
-npm install
+3. **Set up environment variables**
+   
+   Create a `.env` file in the root directory:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key
+   ```
 
-# Set up environment variables
-cp .env.example .env.local
-# Edit .env.local with your credentials
+4. **Set up Supabase database**
+   
+   Run the migration to create the interviews table:
+   ```sql
+   -- supabase/migrations/20251225143000_create_interviews_table.sql
+   CREATE TABLE interviews (
+     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+     category TEXT NOT NULL,
+     difficulty TEXT NOT NULL,
+     score INTEGER NOT NULL,
+     strengths TEXT[],
+     weaknesses TEXT[],
+     overall_feedback TEXT,
+     question_feedback JSONB,
+     created_at TIMESTAMPTZ DEFAULT NOW()
+   );
+   ```
 
-# Run development server
-npm run dev
-```
+5. **Run the development server**
+   ```bash
+   npm run dev
+   ```
 
-### Environment Variables
-
-Create a `.env.local` file with:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-GEMINI_API_KEY=your_gemini_api_key
-```
-
----
-
-## 🗂️ Project Structure
-
-```
-preply/
-├── app/
-│   ├── about/              # About page (Server Component)
-│   ├── api/                # API routes
-│   ├── blog/               # Blog page
-│   ├── contact/            # Contact page
-│   ├── context/            # React contexts (Auth, Interview)
-│   ├── dashboard/          # User dashboard
-│   ├── interview/          # Interview flow
-│   ├── interview-setup/    # Interview configuration
-│   ├── login/              # Authentication
-│   ├── result/             # Interview results
-│   ├── signup/             # User registration
-│   └── page.tsx            # Landing page
-├── components/
-│   ├── dashboard/          # Dashboard-specific components
-│   ├── ui/                 # Reusable UI components
-│   ├── Header.tsx          # Global header
-│   ├── Footer.tsx          # Global footer
-│   └── motion.tsx          # Animation components
-├── lib/
-│   └── supabase.ts         # Supabase client
-└── public/                 # Static assets
-```
+6. **Open your browser**
+   
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## ⚡ Performance Optimizations
+## 📝 Available Scripts
 
-This project implements several performance optimizations:
-
-| Optimization | Impact |
-|-------------|--------|
-| **Server Components** | ~40% faster initial page loads |
-| **Auth Context Caching** | Eliminates redundant API calls |
-| **Next.js Image Optimization** | Automatic lazy loading & compression |
-| **Lazy-loaded Animations** | Reduced initial bundle size |
-| **Modular Icon Imports** | Smaller JavaScript bundles |
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run typecheck` | Run TypeScript type checking |
 
 ---
 
-## 📱 Pages Overview
+## 🗺️ User Flow
 
-| Page | Description |
-|------|-------------|
-| `/` | Beautiful landing page with features showcase |
-| `/login` | User authentication |
-| `/signup` | New user registration |
-| `/dashboard` | Analytics dashboard with charts & history |
-| `/interview-setup` | Configure interview settings |
-| `/interview` | AI-powered mock interview |
-| `/result` | Detailed feedback and scores |
-| `/about` | Team and mission information |
-| `/contact` | Contact form |
-| `/blog` | Articles and updates |
+```
+┌─────────────────┐
+│   Landing Page  │
+│   (Features,    │
+│   Pricing, FAQ) │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐     ┌─────────────────┐
+│     Sign Up     │ ◄── │      Login      │
+└────────┬────────┘     └────────┬────────┘
+         │                       │
+         └───────────┬───────────┘
+                     ▼
+         ┌─────────────────┐
+         │ Interview Setup │
+         │ (Resume, Category│
+         │  Difficulty)     │
+         └────────┬────────┘
+                  │
+                  ▼
+         ┌─────────────────┐
+         │Active Interview │
+         │ (Voice/Text     │
+         │  Responses)     │
+         └────────┬────────┘
+                  │
+                  ▼
+         ┌─────────────────┐
+         │  Result Page    │
+         │ (Score, Feedback│
+         │  Download PDF)  │
+         └────────┬────────┘
+                  │
+                  ▼
+         ┌─────────────────┐
+         │   Dashboard     │
+         │ (History, Stats,│
+         │  Analytics)     │
+         └─────────────────┘
+```
 
 ---
 
 ## 🎨 Screenshots
 
-<div align="center">
-<table>
-<tr>
-<td align="center"><strong>Landing Page</strong></td>
-<td align="center"><strong>Dashboard</strong></td>
-</tr>
-<tr>
-<td><img src="https://via.placeholder.com/400x250?text=Landing+Page" alt="Landing" /></td>
-<td><img src="https://via.placeholder.com/400x250?text=Dashboard" alt="Dashboard" /></td>
-</tr>
-<tr>
-<td align="center"><strong>Interview Session</strong></td>
-<td align="center"><strong>Results Page</strong></td>
-</tr>
-<tr>
-<td><img src="https://via.placeholder.com/400x250?text=Interview" alt="Interview" /></td>
-<td><img src="https://via.placeholder.com/400x250?text=Results" alt="Results" /></td>
-</tr>
-</table>
-</div>
+<details>
+<summary><b>Landing Page</b></summary>
+<br />
+Modern, animated landing page with features, pricing, testimonials, and FAQ sections.
+</details>
+
+<details>
+<summary><b>Interview Setup</b></summary>
+<br />
+Configure your interview by uploading resume, selecting category, and setting difficulty.
+</details>
+
+<details>
+<summary><b>Active Interview</b></summary>
+<br />
+Real-time interview session with voice input, AI questions, and progress tracking.
+</details>
+
+<details>
+<summary><b>Dashboard</b></summary>
+<br />
+Comprehensive analytics with performance charts, interview history, and progress metrics.
+</details>
+
+---
+
+## 🔒 Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key |
+| `NEXT_PUBLIC_GEMINI_API_KEY` | Google Gemini AI API key |
 
 ---
 
@@ -230,24 +293,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-<div align="center">
-
 **Nakul Dafale**
 
-*Computer Science Engineering Student & Full-Stack Developer*
-
-[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/nakuldafale)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/nakuldafale)
-[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:nakuldafale7@gmail.com)
-
-</div>
+- GitHub: [@nakuldafale](https://github.com/nakuldafale)
+- Twitter: [@DafaleNaku75724](https://x.com/DafaleNaku75724)
 
 ---
 
 <div align="center">
-
-### ⭐ Star this repository if you found it helpful!
-
-Made with ❤️ for students everywhere
-
+  <p>Made with ❤️ using Next.js and AI</p>
+  <p>⭐ Star this repo if you find it helpful!</p>
 </div>
