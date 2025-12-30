@@ -88,35 +88,43 @@ export function VideoModal({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-8">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fade-in"
+                className="absolute inset-0 bg-black/90 backdrop-blur-md animate-fade-in"
                 onClick={onClose}
             />
 
             {/* Modal */}
-            <div className="relative w-full max-w-4xl animate-scale-in">
-                {/* Close button */}
+            <div className="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 animate-scale-in group">
+                {/* Close button - Overlay */}
                 <button
                     onClick={onClose}
-                    className="absolute -top-12 right-0 text-white/80 hover:text-white transition-colors"
+                    className="absolute top-4 right-4 z-20 p-2 bg-black/50 hover:bg-white text-white hover:text-black rounded-full backdrop-blur-md transition-all duration-300 opacity-0 group-hover:opacity-100 focus:opacity-100 translate-x-2 group-hover:translate-x-0"
+                    aria-label="Close video"
                 >
-                    <X className="w-8 h-8" />
+                    <X className="w-6 h-6" />
                 </button>
 
                 {/* Video container */}
-                <div className="bg-black rounded-2xl overflow-hidden shadow-2xl">
+                <div className="absolute inset-0 flex items-center justify-center">
                     <video
                         ref={videoRef}
                         src="/demo.mp4"
                         controls
                         autoPlay
-                        className="w-full aspect-video"
+                        className="w-full h-full object-contain"
                     >
                         Your browser does not support the video tag.
                     </video>
                 </div>
+            </div>
+
+            {/* Mobile Close Hint */}
+            <div className="absolute bottom-6 left-0 right-0 text-center pointer-events-none md:hidden animate-fade-in animation-delay-500">
+                <span className="text-white/60 text-xs px-3 py-1 bg-black/40 rounded-full backdrop-blur-sm">
+                    Tap outside to close
+                </span>
             </div>
         </div>
     );
