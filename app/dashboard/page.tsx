@@ -3,10 +3,11 @@
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
+import { useSubscription } from "@/app/context/SubscriptionContext";
 import {
   LogOut, PlusCircle, TrendingUp, Award, Home, Target,
   Zap, Trophy, Calendar, BarChart3, Lightbulb, Flame,
-  CheckCircle2, AlertTriangle, ArrowUpRight, ArrowDownRight
+  CheckCircle2, AlertTriangle, ArrowUpRight, ArrowDownRight, Crown
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { m as motion } from "framer-motion";
@@ -58,13 +59,20 @@ export default function DashboardPage() {
   const [selectedReport, setSelectedReport] = useState<any>(null);
 
   const { user, loading: authLoading, signOut } = useAuth();
+  const { isPro, loading: subLoading } = useSubscription();
 
   useEffect(() => {
     const loadDashboard = async () => {
-      if (authLoading) return;
+      if (authLoading || subLoading) return;
 
       if (!user) {
         router.push("/login");
+        return;
+      }
+
+      // Redirect Free users to pricing page
+      if (!isPro) {
+        router.push("/pricing?upgrade=dashboard");
         return;
       }
 
@@ -90,7 +98,7 @@ export default function DashboardPage() {
     };
 
     loadDashboard();
-  }, [user, authLoading, router]);
+  }, [user, authLoading, subLoading, isPro, router]);
 
   // Calculate analytics
   const analytics = useMemo(() => {
@@ -201,7 +209,7 @@ export default function DashboardPage() {
     setIsReportOpen(true);
   };
 
-  if (loading || authLoading) {
+  if (loading || authLoading || subLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>

@@ -106,8 +106,8 @@ export default function Header() {
                 }
               }}
               className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${isActive("/feedback")
-                  ? "text-violet-600 font-semibold"
-                  : "text-gray-700 hover:text-violet-600"
+                ? "text-violet-600 font-semibold"
+                : "text-gray-700 hover:text-violet-600"
                 }`}
             >
               <MessageSquareHeart className="w-4 h-4" />
@@ -202,4 +202,3 @@ export default function Header() {
     </header>
   );
 }
-

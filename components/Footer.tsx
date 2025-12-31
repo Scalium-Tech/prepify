@@ -116,12 +116,39 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-bold text-gray-900 mb-4">Get Started</h4>
+            <h4 className="font-bold text-gray-900 mb-4">Legal</h4>
+            <ul className="space-y-3 text-sm text-gray-600">
+              <li>
+                <Link href="/terms" className="hover:text-violet-600 transition-colors">
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="hover:text-violet-600 transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/refund" className="hover:text-violet-600 transition-colors">
+                  Refund Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/shipping" className="hover:text-violet-600 transition-colors">
+                  Shipping Policy
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="pt-8 mt-8 border-t border-gray-200">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <Link
               href="/signup"
               className="inline-flex items-center justify-center px-8 py-3 text-sm font-semibold text-white bg-violet-600 rounded-lg hover:bg-violet-700 hover:shadow-lg transition-all duration-200"
             >
-              Sign Up
+              Get Started Free
             </Link>
           </div>
         </div>

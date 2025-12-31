@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { InterviewProvider } from './context/InterviewContext';
 import { AuthProvider } from './context/AuthContext';
+import { SubscriptionProvider } from './context/SubscriptionContext';
 import { MotionProvider } from '@/components/MotionProvider';
 
 const inter = Inter({
@@ -56,11 +57,13 @@ export default function RootLayout({
       </head>
       <body className={inter.className} suppressHydrationWarning>
         <AuthProvider>
-          <InterviewProvider>
-            <MotionProvider>
-              {children}
-            </MotionProvider>
-          </InterviewProvider>
+          <SubscriptionProvider>
+            <InterviewProvider>
+              <MotionProvider>
+                {children}
+              </MotionProvider>
+            </InterviewProvider>
+          </SubscriptionProvider>
         </AuthProvider>
       </body>
     </html>
