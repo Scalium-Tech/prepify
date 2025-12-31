@@ -54,12 +54,12 @@ export default function Footer() {
                 </button>
               </li>
               <li>
-                <button
-                  onClick={() => handleSectionClick("pricing")}
-                  className="hover:text-violet-600 transition-colors text-left"
+                <Link
+                  href="/pricing"
+                  className="hover:text-violet-600 transition-colors"
                 >
                   Pricing
-                </button>
+                </Link>
               </li>
               <li>
                 <button
