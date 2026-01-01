@@ -20,6 +20,7 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { FAQSection, WatchDemoButton } from "./_components/HomeClientParts";
+import { useSubscription } from "@/app/context/SubscriptionContext";
 
 export default function Home() {
   const faqs = [
@@ -54,6 +55,24 @@ export default function Home() {
         "Your dashboard displays all your past interviews with scores, feedback summaries, and performance trends. You can see how your scores improve over time and identify areas that need more practice.",
     },
   ];
+
+  const { isPro, interviewsTaken, loading: subLoading } = useSubscription();
+
+  const getHeroButtonConfig = () => {
+    if (subLoading) return { text: "Start Free Interview", href: "/interview-setup" };
+
+    if (!isPro && interviewsTaken > 0) {
+      return { text: "Get the Paid Version", href: "/pricing" };
+    }
+
+    if (isPro) {
+      return { text: "Start Interview", href: "/interview-setup" };
+    }
+
+    return { text: "Start Free Interview", href: "/interview-setup" };
+  };
+
+  const buttonConfig = getHeroButtonConfig();
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden scroll-smooth">
@@ -94,10 +113,10 @@ export default function Home() {
 
               <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up animation-delay-300">
                 <Link
-                  href="/interview-setup"
+                  href={buttonConfig.href}
                   className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white font-semibold rounded-2xl shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/30 hover:-translate-y-0.5 transition-all duration-300"
                 >
-                  Start Free Interview
+                  {buttonConfig.text}
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <WatchDemoButton />
