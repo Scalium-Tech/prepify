@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { CheckCircle } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +35,10 @@ export default function LoginPage() {
       }
 
       if (data.session) {
-        router.push(redirectTo);
+        setShowSuccess(true);
+        setTimeout(() => {
+          router.push(redirectTo);
+        }, 3000);
       } else {
         setError("Login failed. Please try again.");
         setLoading(false);
@@ -46,6 +51,16 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-violet-50/50 via-white to-white flex items-center justify-center px-6 py-12">
+      {/* Success Overlay */}
+      {showSuccess && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm animate-in fade-in duration-100">
+          <div className="bg-white px-8 py-4 rounded-full shadow-2xl flex items-center gap-3 animate-in zoom-in-95 duration-100">
+            <CheckCircle className="w-6 h-6 text-green-500" />
+            <span className="text-lg font-semibold text-gray-900">Login Successful</span>
+          </div>
+        </div>
+      )}
+
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="flex items-center space-x-3 hover:opacity-90 transition-opacity">

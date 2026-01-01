@@ -70,11 +70,8 @@ export default function DashboardPage() {
         return;
       }
 
-      // Redirect Free users to pricing page
-      if (!isPro) {
-        router.push("/pricing?upgrade=dashboard");
-        return;
-      }
+      // Redirect logic removed to allow Free users to access dashboard logic
+      // if (!isPro) ...
 
       setUserEmail(user.email || "");
 
@@ -193,7 +190,14 @@ export default function DashboardPage() {
     router.push("/");
   };
 
-  const startInterview = () => router.push("/interview-setup");
+  const startInterview = () => {
+    // If user is NOT Pro and has already done at least one interview, redirect to pricing
+    if (!isPro && interviews.length > 0) {
+      router.push("/pricing");
+      return;
+    }
+    router.push("/interview-setup");
+  };
 
   const openScript = (script: any) => {
     setSelectedScript(script);
@@ -232,7 +236,7 @@ export default function DashboardPage() {
               Start your journey to mastering interviews today. Take your first AI-powered mock interview now.
             </p>
             <Button onClick={startInterview} size="lg" className="rounded-xl px-8 h-12 text-base bg-violet-600 hover:bg-violet-700">
-              Start Interview
+              {!isPro ? "Start Free Interview" : "Start Interview"}
             </Button>
           </div>
         </main>
@@ -262,8 +266,18 @@ export default function DashboardPage() {
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
             <p className="text-gray-500 mt-1">Welcome back, {fullName || "Candidate"}</p>
           </div>
-          <Button onClick={startInterview} className="rounded-xl bg-violet-600 hover:bg-violet-700">
-            + New Interview
+          <Button
+            onClick={startInterview}
+            className={`rounded-xl ${!isPro && interviews.length > 0 ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-md" : "bg-violet-600 hover:bg-violet-700"}`}
+          >
+            {!isPro && interviews.length > 0 ? (
+              <>
+                <Crown className="w-4 h-4 mr-2" />
+                Get the Paid Version
+              </>
+            ) : (
+              isPro ? "Start Interview" : " Start Interview" // Using Start Interview for consistency, or + New Interview if preferred. User asked for "Start Interview".
+            )}
           </Button>
         </div>
 

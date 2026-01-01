@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
 import { useSubscription } from "@/app/context/SubscriptionContext";
@@ -102,8 +102,19 @@ const PLANS: Plan[] = [
 export default function PricingPage() {
     const router = useRouter();
     const { user, loading: authLoading } = useAuth();
-    const { subscription, isPro, loading: subLoading } = useSubscription();
+    const { subscription, isPro, loading: subLoading, interviewsTaken } = useSubscription();
     const [processingPlan, setProcessingPlan] = useState<string | null>(null);
+    const [showPopup, setShowPopup] = useState(false);
+
+    useEffect(() => {
+        if (!subLoading && !isPro && interviewsTaken > 0) {
+            setShowPopup(true);
+            const timer = setTimeout(() => {
+                setShowPopup(false);
+            }, 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [subLoading, isPro, interviewsTaken]);
 
     const loadRazorpayScript = (): Promise<boolean> => {
         return new Promise((resolve) => {
@@ -227,6 +238,21 @@ export default function PricingPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+            {/* Pop-up for Free users who have completed an interview */}
+            {showPopup && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white px-8 py-6 rounded-2xl shadow-2xl flex flex-col items-center gap-4 animate-in zoom-in-95 duration-300 border-2 border-violet-100">
+                        <div className="w-12 h-12 bg-violet-100 rounded-full flex items-center justify-center">
+                            <Crown className="w-6 h-6 text-violet-600" />
+                        </div>
+                        <div className="text-center">
+                            <h3 className="text-xl font-bold text-gray-900 mb-1">Get the Paid Version</h3>
+                            <p className="text-gray-500 text-sm">Unlock unlimited potential</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <Header />
 
             <main className="max-w-7xl mx-auto px-6 py-16">
