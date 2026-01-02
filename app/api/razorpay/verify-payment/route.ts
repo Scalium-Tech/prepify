@@ -5,7 +5,6 @@ import { createClient } from "@supabase/supabase-js";
 // Duration mapping for calculating expiry
 const DURATION_MONTHS: Record<string, number> = {
     monthly: 1,
-    half_yearly: 6,
     yearly: 12,
 };
 

@@ -2,11 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import Razorpay from "razorpay";
 import { createClient } from "@supabase/supabase-js";
 
-// Pricing configuration
+// Pricing configuration (amounts in paise)
 const PRICING = {
-    monthly: { amount: 9900, duration: 1 }, // ₹99 = 9900 paise, 1 month
-    half_yearly: { amount: 39900, duration: 6 }, // ₹399, 6 months
-    yearly: { amount: 99900, duration: 12 }, // ₹999, 12 months
+    monthly: { amount: 79900, duration: 1 }, // ₹799 = 79900 paise, 1 month
+    yearly: { amount: 729900, duration: 12 }, // ₹7,299 = 729900 paise, 12 months
 };
 
 export async function POST(request: NextRequest) {

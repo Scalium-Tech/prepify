@@ -6,7 +6,7 @@ import { useAuth } from "@/app/context/AuthContext";
 import { useSubscription } from "@/app/context/SubscriptionContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Check, Sparkles, Zap, Crown, ArrowRight, Loader2 } from "lucide-react";
+import { Check, X, Sparkles, Crown, Loader2 } from "lucide-react";
 
 declare global {
     interface Window {
@@ -19,90 +19,36 @@ interface PlanFeature {
     included: boolean;
 }
 
-interface Plan {
-    id: string;
-    name: string;
-    price: number;
-    originalPrice?: number;
-    period: string;
-    billingCycle: "monthly" | "half_yearly" | "yearly";
-    features: PlanFeature[];
-    popular?: boolean;
-    badge?: string;
-}
-
-const PLANS: Plan[] = [
-    {
-        id: "free",
-        name: "Free",
-        price: 0,
-        period: "forever",
-        billingCycle: "monthly",
-        features: [
-            { text: "1 interview (lifetime)", included: true },
-            { text: "1 report download", included: true },
-            { text: "AI-powered feedback", included: true },
-            { text: "Dashboard access", included: false },
-            { text: "Progress tracking", included: false },
-            { text: "Interview history", included: false },
-        ],
-    },
-    {
-        id: "pro-monthly",
-        name: "Pro Monthly",
-        price: 99,
-        period: "/month",
-        billingCycle: "monthly",
-        features: [
-            { text: "Unlimited interviews", included: true },
-            { text: "Unlimited report downloads", included: true },
-            { text: "AI-powered feedback", included: true },
-            { text: "Dashboard access", included: true },
-            { text: "Progress tracking", included: true },
-            { text: "Interview history", included: true },
-        ],
-    },
-    {
-        id: "pro-half-yearly",
-        name: "Pro 6-Month",
-        price: 399,
-        originalPrice: 594,
-        period: "/6 months",
-        billingCycle: "half_yearly",
-        badge: "Save 33%",
-        features: [
-            { text: "Unlimited interviews", included: true },
-            { text: "Unlimited report downloads", included: true },
-            { text: "AI-powered feedback", included: true },
-            { text: "Dashboard access", included: true },
-            { text: "Progress tracking", included: true },
-            { text: "Interview history", included: true },
-        ],
-    },
-    {
-        id: "pro-yearly",
-        name: "Pro Yearly",
-        price: 999,
-        originalPrice: 1188,
-        period: "/year",
-        billingCycle: "yearly",
-        popular: true,
-        badge: "Best Value",
-        features: [
-            { text: "Unlimited interviews", included: true },
-            { text: "Unlimited report downloads", included: true },
-            { text: "AI-powered feedback", included: true },
-            { text: "Dashboard access", included: true },
-            { text: "Progress tracking", included: true },
-            { text: "Interview history", included: true },
-        ],
-    },
+// Plan features as per user requirements
+const FREE_FEATURES: PlanFeature[] = [
+    { text: "1 interview (lifetime)", included: true },
+    { text: "1 report download", included: true },
+    { text: "AI-powered feedback", included: true },
+    { text: "Dashboard access", included: true },
+    { text: "Progress tracking", included: true },
+    { text: "Interview history", included: true },
 ];
+
+const PRO_FEATURES: PlanFeature[] = [
+    { text: "Everything in Free", included: true },
+    { text: "Unlimited interviews", included: true },
+    { text: "Unlimited report downloads", included: true },
+    { text: "Dashboard access", included: true },
+    { text: "Progress tracking", included: true },
+    { text: "Interview history", included: true },
+];
+
+// Pricing as per user requirements: ₹799/month, ₹7,299/year
+const PRO_PRICING = {
+    monthly: { amount: 79900, display: 799, period: "/month", billingCycle: "monthly" as const },
+    yearly: { amount: 729900, display: "7,299", period: "/year", billingCycle: "yearly" as const },
+};
 
 export default function PricingPage() {
     const router = useRouter();
     const { user, loading: authLoading } = useAuth();
-    const { subscription, isPro, loading: subLoading, interviewsTaken } = useSubscription();
+    const { isPro, loading: subLoading, interviewsTaken } = useSubscription();
+    const [isYearly, setIsYearly] = useState(false);
     const [processingPlan, setProcessingPlan] = useState<string | null>(null);
     const [showPopup, setShowPopup] = useState(false);
 
@@ -130,12 +76,11 @@ export default function PricingPage() {
         });
     };
 
-    const handleSelectPlan = async (plan: Plan) => {
-        if (plan.id === "free") {
-            router.push("/interview-setup");
-            return;
-        }
+    const handleFreePlan = () => {
+        router.push("/interview-setup");
+    };
 
+    const handleProPlan = async () => {
         if (!user) {
             router.push("/login?redirect=/pricing");
             return;
@@ -146,10 +91,10 @@ export default function PricingPage() {
             return;
         }
 
-        setProcessingPlan(plan.id);
+        const selectedPricing = isYearly ? PRO_PRICING.yearly : PRO_PRICING.monthly;
+        setProcessingPlan("pro");
 
         try {
-            // Load Razorpay script
             const scriptLoaded = await loadRazorpayScript();
             if (!scriptLoaded) {
                 alert("Failed to load payment gateway. Please try again.");
@@ -157,12 +102,11 @@ export default function PricingPage() {
                 return;
             }
 
-            // Create order
             const orderResponse = await fetch("/api/razorpay/create-order", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    billingCycle: plan.billingCycle,
+                    billingCycle: selectedPricing.billingCycle,
                     userId: user.id,
                 }),
             });
@@ -170,21 +114,19 @@ export default function PricingPage() {
             const orderData = await orderResponse.json();
 
             if (!orderData.orderId) {
-                alert("Failed to create order. Please try again.");
+                alert(orderData.error || "Failed to create order. Please try again.");
                 setProcessingPlan(null);
                 return;
             }
 
-            // Open Razorpay checkout
             const options = {
                 key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
                 amount: orderData.amount,
                 currency: orderData.currency,
                 name: "Preply",
-                description: `Pro Plan - ${plan.name}`,
+                description: `Pro Plan - ${isYearly ? "Yearly" : "Monthly"}`,
                 order_id: orderData.orderId,
                 handler: async (response: any) => {
-                    // Verify payment
                     const verifyResponse = await fetch("/api/razorpay/verify-payment", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -193,7 +135,7 @@ export default function PricingPage() {
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature,
                             userId: user.id,
-                            billingCycle: plan.billingCycle,
+                            billingCycle: selectedPricing.billingCycle,
                         }),
                     });
 
@@ -236,8 +178,10 @@ export default function PricingPage() {
         );
     }
 
+    const currentPrice = isYearly ? PRO_PRICING.yearly : PRO_PRICING.monthly;
+
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        <div className="min-h-screen bg-gradient-to-b from-violet-50/30 via-white to-white">
             {/* Pop-up for Free users who have completed an interview */}
             {showPopup && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
@@ -255,9 +199,9 @@ export default function PricingPage() {
 
             <Header />
 
-            <main className="max-w-7xl mx-auto px-6 py-16">
+            <main className="max-w-5xl mx-auto px-6 py-16">
                 {/* Header */}
-                <div className="text-center mb-16">
+                <div className="text-center mb-12">
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-violet-100 rounded-full text-violet-700 text-sm font-medium mb-6">
                         <Sparkles className="w-4 h-4" />
                         Choose Your Plan
@@ -266,145 +210,146 @@ export default function PricingPage() {
                         Invest in Your Career
                     </h1>
                     <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                        Practice unlimited interviews, track your progress, and land your dream job with AI-powered feedback.
+                        Practice unlimited interviews, track your progress, and land your dream job.
                     </p>
                 </div>
 
-                {/* Pricing Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-                    {PLANS.map((plan) => (
-                        <div
-                            key={plan.id}
-                            className={`relative bg-white rounded-2xl border-2 p-6 transition-all duration-300 hover:shadow-xl ${plan.popular
-                                ? "border-violet-500 shadow-lg shadow-violet-100"
-                                : "border-gray-200 hover:border-violet-300"
+                {/* Monthly/Yearly Toggle */}
+                <div className="flex items-center justify-center gap-4 mb-12">
+                    <span className={`text-sm font-medium transition-colors ${!isYearly ? "text-gray-900" : "text-gray-400"}`}>
+                        Monthly
+                    </span>
+                    <button
+                        onClick={() => setIsYearly(!isYearly)}
+                        className={`relative w-14 h-7 rounded-full transition-colors duration-300 ${isYearly ? "bg-violet-600" : "bg-gray-300"
+                            }`}
+                    >
+                        <span
+                            className={`absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow-md transition-transform duration-300 ${isYearly ? "translate-x-7" : "translate-x-0"
                                 }`}
-                        >
-                            {/* Badge */}
-                            {plan.badge && (
-                                <div
-                                    className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-bold ${plan.popular
-                                        ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white"
-                                        : "bg-green-100 text-green-700"
-                                        }`}
-                                >
-                                    {plan.badge}
-                                </div>
-                            )}
+                        />
+                    </button>
+                    <span className={`text-sm font-medium transition-colors ${isYearly ? "text-gray-900" : "text-gray-400"}`}>
+                        Yearly
+                    </span>
+                </div>
 
-                            {/* Plan Icon */}
-                            <div
-                                className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${plan.id === "free"
-                                    ? "bg-gray-100"
-                                    : plan.popular
-                                        ? "bg-gradient-to-br from-violet-500 to-purple-600"
-                                        : "bg-violet-100"
-                                    }`}
-                            >
-                                {plan.id === "free" ? (
-                                    <Zap className="w-6 h-6 text-gray-600" />
-                                ) : (
-                                    <Crown
-                                        className={`w-6 h-6 ${plan.popular ? "text-white" : "text-violet-600"
-                                            }`}
-                                    />
-                                )}
-                            </div>
+                {/* Pricing Cards */}
+                <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    {/* Free Plan Card */}
+                    <div className="relative bg-white rounded-3xl border-2 border-gray-200 p-8 shadow-sm hover:shadow-lg transition-all duration-300">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">Free</h3>
 
-                            {/* Plan Name */}
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-
-                            {/* Price */}
-                            <div className="mb-6">
-                                <div className="flex items-baseline gap-1">
-                                    <span className="text-4xl font-bold text-gray-900">
-                                        ₹{plan.price}
-                                    </span>
-                                    <span className="text-gray-500">{plan.period}</span>
-                                </div>
-                                {plan.originalPrice && (
-                                    <p className="text-sm text-gray-400 line-through mt-1">
-                                        ₹{plan.originalPrice}
-                                    </p>
-                                )}
-                            </div>
-
-                            {/* Features */}
-                            <ul className="space-y-3 mb-6">
-                                {plan.features.map((feature, index) => (
-                                    <li key={index} className="flex items-start gap-2">
-                                        <Check
-                                            className={`w-5 h-5 mt-0.5 flex-shrink-0 ${feature.included ? "text-green-500" : "text-gray-300"
-                                                }`}
-                                        />
-                                        <span
-                                            className={
-                                                feature.included ? "text-gray-700" : "text-gray-400"
-                                            }
-                                        >
-                                            {feature.text}
-                                        </span>
-                                    </li>
-                                ))}
-                            </ul>
-
-                            {/* CTA Button */}
-                            <button
-                                onClick={() => handleSelectPlan(plan)}
-                                disabled={processingPlan !== null}
-                                className={`w-full py-3 px-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${plan.popular
-                                    ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:shadow-lg hover:shadow-violet-200"
-                                    : plan.id === "free"
-                                        ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                        : "bg-violet-100 text-violet-700 hover:bg-violet-200"
-                                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                            >
-                                {processingPlan === plan.id ? (
-                                    <>
-                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                        Processing...
-                                    </>
-                                ) : isPro && plan.id !== "free" ? (
-                                    "Current Plan"
-                                ) : plan.id === "free" ? (
-                                    <>
-                                        Start Free
-                                        <ArrowRight className="w-4 h-4" />
-                                    </>
-                                ) : (
-                                    <>
-                                        Upgrade to Pro
-                                        <ArrowRight className="w-4 h-4" />
-                                    </>
-                                )}
-                            </button>
+                        {/* Price */}
+                        <div className="mb-2">
+                            <span className="text-5xl font-bold text-gray-900">₹0</span>
+                            <span className="text-gray-500 ml-1">forever</span>
                         </div>
-                    ))}
+                        <p className="text-gray-500 text-sm mb-8">Everything you need to get started</p>
+
+                        {/* Features */}
+                        <ul className="space-y-4 mb-8">
+                            {FREE_FEATURES.map((feature, index) => (
+                                <li key={index} className="flex items-center gap-3">
+                                    {feature.included ? (
+                                        <div className="w-5 h-5 rounded-full bg-violet-100 flex items-center justify-center flex-shrink-0">
+                                            <Check className="w-3 h-3 text-violet-600" />
+                                        </div>
+                                    ) : (
+                                        <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                                            <X className="w-3 h-3 text-gray-400" />
+                                        </div>
+                                    )}
+                                    <span className={feature.included ? "text-gray-700" : "text-gray-400"}>
+                                        {feature.text}
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+
+                        {/* CTA Button */}
+                        <button
+                            onClick={handleFreePlan}
+                            className="w-full py-4 px-6 rounded-xl font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all duration-200"
+                        >
+                            Start Free
+                        </button>
+                    </div>
+
+                    {/* Pro Plan Card */}
+                    <div className="relative bg-white rounded-3xl border-2 border-violet-500 p-8 shadow-lg shadow-violet-100">
+                        {/* Most Popular Badge */}
+                        <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                            <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-semibold rounded-full shadow-lg">
+                                <Sparkles className="w-4 h-4" />
+                                Most Popular
+                            </span>
+                        </div>
+
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2 mt-2">Pro</h3>
+
+                        {/* Price */}
+                        <div className="mb-2">
+                            <span className="text-5xl font-bold text-violet-600">₹{currentPrice.display}</span>
+                            <span className="text-gray-500 ml-1">{currentPrice.period}</span>
+                        </div>
+                        <p className="text-gray-500 text-sm mb-8">For serious growth-seekers</p>
+
+                        {/* Features */}
+                        <ul className="space-y-4 mb-8">
+                            {PRO_FEATURES.map((feature, index) => (
+                                <li key={index} className="flex items-center gap-3">
+                                    <div className="w-5 h-5 rounded-full bg-violet-100 flex items-center justify-center flex-shrink-0">
+                                        <Check className="w-3 h-3 text-violet-600" />
+                                    </div>
+                                    <span className="text-gray-700">{feature.text}</span>
+                                </li>
+                            ))}
+                        </ul>
+
+                        {/* CTA Button */}
+                        <button
+                            onClick={handleProPlan}
+                            disabled={processingPlan !== null}
+                            className="w-full py-4 px-6 rounded-xl font-semibold text-white bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        >
+                            {processingPlan === "pro" ? (
+                                <>
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                    Processing...
+                                </>
+                            ) : isPro ? (
+                                "Current Plan"
+                            ) : (
+                                "Upgrade to Pro"
+                            )}
+                        </button>
+                    </div>
                 </div>
 
                 {/* Trust Badges */}
-                <div className="text-center">
+                <div className="text-center mt-16">
                     <p className="text-gray-500 mb-4">Trusted payment powered by</p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
                         <div className="flex items-center gap-2 text-gray-400">
-                            <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                             </svg>
-                            <span>Secure Checkout</span>
+                            <span className="text-sm">Secure Checkout</span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-400">
-                            <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
                             </svg>
-                            <span>256-bit SSL</span>
+                            <span className="text-sm">256-bit SSL</span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-400">
                             <img
                                 src="https://razorpay.com/favicon.png"
                                 alt="Razorpay"
-                                className="w-6 h-6"
+                                className="w-5 h-5"
                             />
-                            <span>Razorpay</span>
+                            <span className="text-sm">Razorpay</span>
                         </div>
                     </div>
                 </div>
@@ -420,7 +365,7 @@ export default function PricingPage() {
                                 Can I cancel anytime?
                             </h3>
                             <p className="text-gray-600">
-                                Yes! Your Pro subscription is one-time payment. It expires after the selected duration with no auto-renewal.
+                                Yes! Your Pro subscription is a one-time payment. It expires after the selected duration with no auto-renewal.
                             </p>
                         </div>
                         <div className="bg-white rounded-xl border border-gray-200 p-6">
