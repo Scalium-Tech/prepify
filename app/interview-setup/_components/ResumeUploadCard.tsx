@@ -8,7 +8,7 @@ import { useState, useRef } from "react";
 import { toast } from "sonner"; // Assuming sonner is installed or use alert
 
 export function ResumeUploadCard() {
-    const { setup, setSetup } = useInterview();
+    const { setup, setSetup, setResumeFile } = useInterview();
     const [isUploading, setIsUploading] = useState(false);
     const [activeTab, setActiveTab] = useState<'resume' | 'jd'>('resume');
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -36,6 +36,7 @@ export function ResumeUploadCard() {
 
             if (type === 'resume') {
                 setSetup((prev) => ({ ...prev, resumeText: data.text }));
+                setResumeFile(file); // Store file for later upload
             } else {
                 setSetup((prev) => ({ ...prev, jobDescription: data.text }));
             }

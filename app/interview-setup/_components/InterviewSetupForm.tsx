@@ -4,6 +4,8 @@ import { useState } from "react";
 import { m as motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useInterview } from "@/app/context/InterviewContext";
+import { useAuth } from "@/app/context/AuthContext";
+import { supabase } from "@/lib/supabase";
 import {
     Briefcase,
     MessagesSquare,
@@ -51,7 +53,8 @@ const DIFFICULTIES = [
 
 export function InterviewSetupForm() {
     const router = useRouter();
-    const { setup, setSetup, setQuestions, setAnswers, setReport } = useInterview();
+    const { user } = useAuth();
+    const { setup, setSetup, setQuestions, setAnswers, setReport, resumeFile, setResumeId } = useInterview();
     const [isGenerating, setIsGenerating] = useState(false);
 
     const updateCategory = (id: string) => setSetup(prev => ({ ...prev, category: id }));
@@ -74,6 +77,47 @@ export function InterviewSetupForm() {
         }
 
         try {
+            // 0. Upload Resume if exists
+            let currentResumeId = null;
+            if (resumeFile && user) {
+                console.log("Uploading resume...", resumeFile.name);
+                const fileExt = resumeFile.name.split('.').pop();
+                const fileName = `${user.id}/${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+                const { error: uploadError, data: uploadData } = await supabase.storage
+                    .from('resumes')
+                    .upload(fileName, resumeFile);
+
+                if (uploadError) {
+                    console.error("Resume Upload Error:", uploadError);
+                    // Continue without saving resume to DB if upload fails
+                } else if (uploadData) {
+                    console.log("Resume uploaded:", uploadData);
+
+                    // Insert into resumes table
+                    const { data: resumeData, error: dbError } = await supabase
+                        .from('resumes')
+                        .insert({
+                            user_id: user.id,
+                            file_name: resumeFile.name,
+                            file_path: uploadData.path,
+                            file_type: resumeFile.type,
+                            file_size_bytes: resumeFile.size,
+                            extracted_text: setup.resumeText || ""
+                        })
+                        .select()
+                        .single();
+
+                    if (dbError) {
+                        console.error("Resume DB Insert Error:", dbError);
+                    } else if (resumeData) {
+                        console.log("Resume record created:", resumeData);
+                        currentResumeId = resumeData.id;
+                        setResumeId(currentResumeId);
+                    }
+                }
+            }
+
             const res = await fetch("/api/interview/generate-questions", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

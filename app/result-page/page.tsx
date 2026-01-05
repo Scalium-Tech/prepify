@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 export default function InterviewResultsPage() {
     const router = useRouter();
-    const { questions, answers, setup, report, setReport, resetInterview } = useInterview();
+    const { questions, answers, setup, report, setReport, resetInterview, resumeId } = useInterview();
     const { isPro, loading: subLoading, refreshSubscription } = useSubscription();
     const [isLoading, setIsLoading] = useState(true);
     const processedRef = useRef(false);
@@ -73,7 +73,8 @@ export default function InterviewResultsPage() {
                             script: scriptData,
                             interview_date: interviewDate,
                             interview_time: interviewTime,
-                            created_at: now.toISOString()
+                            created_at: now.toISOString(),
+                            resume_id: resumeId || null
                         })
                         .select(); // Select to confirm insert
 
@@ -82,6 +83,26 @@ export default function InterviewResultsPage() {
                         alert(`Error saving result: ${error.message}`);
                     } else {
                         console.log("Supabase Insert Success:", insertData);
+
+                        // Save structured report to interview_reports table
+                        if (insertData && insertData[0]?.id) {
+                            const { error: reportError } = await supabase
+                                .from("interview_reports")
+                                .insert({
+                                    interview_id: insertData[0].id,
+                                    overall_score: data.score,
+                                    overall_feedback: data.feedback,
+                                    strengths: data.strengths || [],
+                                    weaknesses: data.weaknesses || [],
+                                    questions_answers: data.questionFeedback || []
+                                });
+
+                            if (reportError) {
+                                console.error("Failed to save interview report:", reportError);
+                            } else {
+                                console.log("Interview report saved successfully");
+                            }
+                        }
 
                         // Update cached dashboard analytics
                         const { updateUserAnalytics } = await import("@/lib/updateUserAnalytics");
