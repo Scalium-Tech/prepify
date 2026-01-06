@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
@@ -14,13 +14,20 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Prefetch the dashboard/setup page for instant navigation
+  useEffect(() => {
+    router.prefetch(redirectTo);
+  }, [router, redirectTo]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
+      // Use the singleton instance directly if possible, or dynamic import optimized
       const { supabase } = await import("@/lib/supabase");
+
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -33,7 +40,7 @@ export default function LoginPage() {
       }
 
       if (data.session) {
-        // Redirect immediately without popup delay
+        // Redirect immediately
         router.push(redirectTo);
       } else {
         setError("Login failed. Please try again.");

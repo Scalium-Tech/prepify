@@ -9,11 +9,18 @@ import { ResumeUploadCard } from "./_components/ResumeUploadCard";
 import { useAuth } from "@/app/context/AuthContext";
 import { useSubscription } from "@/app/context/SubscriptionContext";
 import { Loader2 } from "lucide-react";
+import { useInterview } from "@/app/context/InterviewContext";
 
 export default function InterviewSetupPage() {
     const router = useRouter();
     const { user, loading: authLoading } = useAuth();
     const { canTakeInterview, loading: subLoading, interviewsTaken, isPro } = useSubscription();
+    const { resetInterview } = useInterview();
+
+    // Reset state on every visit to ensure a fresh session
+    useEffect(() => {
+        resetInterview();
+    }, []);
 
     useEffect(() => {
         if (authLoading || subLoading) return;
@@ -30,20 +37,26 @@ export default function InterviewSetupPage() {
         }
     }, [user, authLoading, subLoading, canTakeInterview, router]);
 
-    // Show loading while checking auth and subscription
+    // Show Skeleton UI while loading to avoid layout shift and feel "instant"
     if (authLoading || subLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-50">
-                <Loader2 className="w-8 h-8 animate-spin text-violet-600" />
-            </div>
-        );
-    }
+            <div className="min-h-screen bg-slate-50">
+                <div className="fixed inset-0 -z-10 bg-gradient-to-br from-violet-50 via-white to-purple-50" />
+                <Header />
+                <main className="container py-8 md:py-16">
+                    <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start max-w-6xl mx-auto">
+                        {/* Resume Card Skeleton */}
+                        <div className="h-[600px] rounded-[2.5rem] border-2 border-dashed border-gray-100 bg-white/40 animate-pulse" />
 
-    // Don't render if redirecting
-    if (!user || !canTakeInterview) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-50">
-                <Loader2 className="w-8 h-8 animate-spin text-violet-600" />
+                        {/* Form Skeleton */}
+                        <div className="bg-white/80 rounded-[2.5rem] h-[600px] p-8 shadow-sm animate-pulse">
+                            <div className="h-8 w-48 bg-gray-200 rounded-lg mb-8" />
+                            <div className="h-12 w-full bg-gray-200 rounded-xl mb-6" />
+                            <div className="h-12 w-full bg-gray-200 rounded-xl mb-6" />
+                            <div className="h-12 w-full bg-gray-200 rounded-xl" />
+                        </div>
+                    </div>
+                </main>
             </div>
         );
     }

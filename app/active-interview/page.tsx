@@ -335,7 +335,9 @@ export default function InterviewSessionPage() {
                             "w-full h-14 text-lg font-semibold rounded-xl shadow-none transition-all duration-200",
                             isListening
                                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                : "bg-gray-100 text-gray-600 hover:bg-violet-600 hover:text-white hover:shadow-lg"
+                                : transcript.trim().length > 0
+                                    ? "bg-green-100 text-green-700 border-2 border-green-200 hover:bg-green-200 hover:text-green-800 shadow-sm"
+                                    : "bg-gray-100 text-gray-600 hover:bg-violet-600 hover:text-white hover:shadow-lg"
                         )}
                     >
                         {isListening ? "Stop Listening to Continue" : (currentQuestionIndex < questions.length - 1 ? "Next Question" : "Finish Interview")}
