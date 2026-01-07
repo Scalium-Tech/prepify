@@ -6,7 +6,7 @@ import { useAuth } from "@/app/context/AuthContext";
 import { useSubscription } from "@/app/context/SubscriptionContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Check, X, Sparkles, Crown, Loader2, X as CloseIcon } from "lucide-react";
+import { Check, X, Sparkles, Crown, Loader2 } from "lucide-react";
 import { useRazorpayPayment } from "@/hooks/useRazorpayPayment";
 import { toast } from "sonner";
 
@@ -105,7 +105,7 @@ export default function PricingPage() {
                             onClick={() => setShowPopup(false)}
                             className="absolute top-2 right-2 p-1 text-gray-400 hover:text-gray-600 transition-colors"
                         >
-                            <CloseIcon className="w-5 h-5" />
+                            <X className="w-5 h-5" />
                         </button>
                         <div className="w-12 h-12 bg-violet-100 rounded-full flex items-center justify-center">
                             <Crown className="w-6 h-6 text-violet-600" />
